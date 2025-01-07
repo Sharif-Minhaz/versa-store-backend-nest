@@ -7,6 +7,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import dbConfig from './config/db.config';
 import dbConfigProduction from './config/db.config.production';
 import { LoggerModule } from 'nestjs-pino';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import cloudinaryConfig from './config/cloudinary.config';
 
 @Module({
   imports: [
@@ -26,13 +28,15 @@ import { LoggerModule } from 'nestjs-pino';
     ConfigModule.forRoot({
       isGlobal: true,
       expandVariables: true,
-      load: [dbConfig, dbConfigProduction],
+      envFilePath: '.env',
+      load: [dbConfig, dbConfigProduction, cloudinaryConfig],
     }),
     CategoryModule,
     TypeOrmModule.forRootAsync({
       useFactory:
         process.env.NODE_ENV === 'production' ? dbConfigProduction : dbConfig,
     }),
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
