@@ -8,6 +8,10 @@ import dbConfig from './config/db.config';
 import dbConfigProduction from './config/db.config.production';
 import { LoggerModule } from 'nestjs-pino';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { ProductController } from './product/product.controller';
+import { ProductService } from './product/product.service';
+import { ProductModule } from './product/product.module';
+import { AuthModule } from './auth/auth.module';
 import cloudinaryConfig from './config/cloudinary.config';
 
 @Module({
@@ -37,8 +41,10 @@ import cloudinaryConfig from './config/cloudinary.config';
         process.env.NODE_ENV === 'production' ? dbConfigProduction : dbConfig,
     }),
     CloudinaryModule,
+    ProductModule,
+    AuthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, ProductController],
+  providers: [AppService, ProductService],
 })
 export class AppModule {}
