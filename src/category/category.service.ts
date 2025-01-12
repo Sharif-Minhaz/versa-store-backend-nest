@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Category } from 'src/entities/Category.entity';
+import Category from 'src/entities/Category.entity';
 import { ILike, Repository } from 'typeorm';
 import { CreateCategoryZodDto } from './dto/createCategory.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';

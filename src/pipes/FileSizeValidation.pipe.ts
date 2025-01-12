@@ -9,7 +9,7 @@ import {
 export class FileValidationPipe implements PipeTransform {
   transform(value: Express.Multer.File, _metadata: ArgumentMetadata) {
     if (!value) {
-      throw new BadRequestException('No file uploaded');
+      return null;
     }
 
     const tenMb = 10 * 1024 * 1024;

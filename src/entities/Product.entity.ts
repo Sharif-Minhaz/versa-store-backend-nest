@@ -8,15 +8,15 @@ import {
   ManyToMany,
   OneToMany,
 } from 'typeorm';
-import { Category } from './Category.entity';
-import { Vendor } from './Vendor.entity';
-import { Bookmark } from './Bookmark.entity';
-import { ProductImage } from './ProductImage.entity';
-import { ProductVariant } from './ProductVariant.entity';
-import { Review } from './Review.entity';
+import Category from './Category.entity';
+import Vendor from './Vendor.entity';
+import Bookmark from './Bookmark.entity';
+import ProductImage from './ProductImage.entity';
+import ProductVariant from './ProductVariant.entity';
+import Review from './Review.entity';
 
 @Entity()
-export class Product {
+export default class Product {
   @PrimaryGeneratedColumn()
   _id: number;
 

@@ -6,11 +6,11 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Customer } from './Customer.entity';
-import { Product } from './Product.entity';
+import Customer from './Customer.entity';
+import Product from './Product.entity';
 
 @Entity()
-export class Bookmark {
+export default class Bookmark {
   @PrimaryGeneratedColumn()
   _id: number;
 

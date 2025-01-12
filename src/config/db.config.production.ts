@@ -1,6 +1,6 @@
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
-import path from 'path';
+import * as path from 'path';
 
 export default (): PostgresConnectionOptions => ({
   url: process.env.DATABASE_URL,

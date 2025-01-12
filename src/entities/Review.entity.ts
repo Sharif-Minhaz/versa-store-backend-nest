@@ -6,13 +6,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Product } from './Product.entity';
-import { Vendor } from './Vendor.entity';
-import { Admin } from './Admin.entity';
-import { Customer } from './Customer.entity';
+import Product from './Product.entity';
+import Vendor from './Vendor.entity';
+import Admin from './Admin.entity';
+import Customer from './Customer.entity';
 
 @Entity()
-export class Review {
+export default class Review {
   @PrimaryGeneratedColumn()
   id: number;
 

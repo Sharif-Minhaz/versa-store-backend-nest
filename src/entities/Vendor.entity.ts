@@ -6,11 +6,11 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
 } from 'typeorm';
-import { Bookmark } from './Bookmark.entity';
-import { Product } from './Product.entity';
+import Bookmark from './Bookmark.entity';
+import Product from './Product.entity';
 
 @Entity()
-export class Vendor {
+export default class Vendor {
   @PrimaryGeneratedColumn()
   _id: number;
 
@@ -23,7 +23,7 @@ export class Vendor {
   @Column({ select: false })
   password: string;
 
-  @Column({ enum: ['google', 'form'], default: 'google' })
+  @Column({ enum: ['google', 'form'], default: 'form' })
   loginMethod: string;
 
   @Column({ nullable: true })

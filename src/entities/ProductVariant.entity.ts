@@ -1,8 +1,8 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Product } from './Product.entity';
+import Product from './Product.entity';
 
 @Entity()
-export class ProductVariant {
+export default class ProductVariant {
   @PrimaryGeneratedColumn()
   _id: number;
 
