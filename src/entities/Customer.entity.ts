@@ -19,7 +19,7 @@ export default class Customer {
   @Column({ unique: true })
   email: string;
 
-  @Column({ select: false })
+  @Column({ select: false, nullable: true })
   password: string;
 
   @Column({ enum: ['google', 'form'], default: 'form' })

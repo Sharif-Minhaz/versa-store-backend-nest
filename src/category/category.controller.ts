@@ -6,6 +6,7 @@ import {
   ParseIntPipe,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
@@ -15,7 +16,8 @@ import {
 } from './dto/createCategory.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ZodValidationPipe } from 'src/pipes/ZodValidation.pipe';
-import { FileValidationPipe } from 'src/pipes/FileSizeValidation.pipe';
+import { FileValidationPipe } from 'src/pipes/FileValidation.pipe';
+import { LoggedInGuard } from 'src/common/guards/loggedIn.guard';
 
 @Controller('categories')
 export class CategoryController {
@@ -31,6 +33,7 @@ export class CategoryController {
     return this.appService.getCategoryById(id);
   }
 
+  @UseGuards(LoggedInGuard)
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   create(

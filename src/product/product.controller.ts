@@ -1,5 +1,13 @@
-import { Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ProductService } from './product.service';
+import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
 
 @Controller('products')
 export class ProductController {
@@ -25,6 +33,7 @@ export class ProductController {
     return this.productService.getVendorProducts(name);
   }
 
+  @UseGuards(AccessTokenGuard)
   @Post()
   addProduct() {
     return this.productService.addProduct();

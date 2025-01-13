@@ -13,6 +13,8 @@ import { ProductService } from './product/product.service';
 import { ProductModule } from './product/product.module';
 import { AuthModule } from './auth/auth.module';
 import cloudinaryConfig from './config/cloudinary.config';
+import { APP_GUARD } from '@nestjs/core';
+import { LoggedInGuard } from './common/guards/loggedIn.guard';
 
 @Module({
   imports: [
@@ -45,6 +47,13 @@ import cloudinaryConfig from './config/cloudinary.config';
     AuthModule,
   ],
   controllers: [AppController, ProductController],
-  providers: [AppService, ProductService],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: LoggedInGuard,
+    },
+    AppService,
+    ProductService,
+  ],
 })
 export class AppModule {}

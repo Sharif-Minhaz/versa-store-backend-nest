@@ -12,7 +12,7 @@ export class FileValidationPipe implements PipeTransform {
       return null;
     }
 
-    const tenMb = 10 * 1024 * 1024;
+    const tenMB = 10 * 1024 * 1024;
     const allowedMimeTypes = [
       'image/jpg',
       'image/gif',
@@ -28,9 +28,9 @@ export class FileValidationPipe implements PipeTransform {
       );
     }
 
-    if (value.size >= tenMb) {
+    if (value.size >= tenMB) {
       throw new BadRequestException(
-        `File size too large. Maximum size allowed is ${tenMb / (1024 * 1024)}MB`,
+        `File size too large. Maximum size allowed is ${tenMB / (1024 * 1024)}MB`,
       );
     }
 
