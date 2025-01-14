@@ -137,7 +137,7 @@ export class AuthService {
         break;
       case 'customer':
         user = await this.customerRepository.findOne({
-          where: { email: dto.email },
+          where: { email: dto.email, loginMethod: 'form', isBan: false },
           select: {
             fullName: true,
             email: true,

@@ -18,6 +18,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ZodValidationPipe } from 'src/pipes/ZodValidation.pipe';
 import { FileValidationPipe } from 'src/pipes/FileValidation.pipe';
 import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
+import { IsAdminOrVendorGuard } from 'src/common/guards/isAdminOrVendor.guard';
 
 @Controller('categories')
 export class CategoryController {
@@ -33,7 +34,7 @@ export class CategoryController {
     return this.appService.getCategoryById(id);
   }
 
-  @UseGuards(AccessTokenGuard)
+  @UseGuards(AccessTokenGuard, IsAdminOrVendorGuard)
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   create(

@@ -2,6 +2,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
   UseGuards,
@@ -19,13 +20,13 @@ export class ProductController {
   }
 
   @Get('single/:id')
-  getProductById(id: string) {
+  getProductById(@Param('id') id: number) {
     return this.productService.getProductById(id);
   }
 
   @Get('popular')
-  getProductsByCategory(id: string) {
-    return this.productService.getProductsByCategory(id);
+  getPopularProducts() {
+    return this.productService.getPopularProducts();
   }
 
   @Get('vendor')

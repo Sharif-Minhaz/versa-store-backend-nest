@@ -1,17 +1,40 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import Product from 'src/entities/Product.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ProductService {
-  getAllProducts() {
-    return { success: true };
+  constructor(
+    @InjectRepository(Product) private productRepository: Repository<Product>,
+  ) {}
+
+  async getAllProducts() {
+    const products = await this.productRepository.find();
+
+    return { success: true, data: { products } };
   }
 
-  getProductById(id: string) {
-    return { success: true, message: `This action returns a #${id} product` };
+  async getProductById(id: number) {
+    const product = await this.productRepository.findOne({
+      where: { _id: id },
+    });
+
+    if (!product)
+      throw new NotFoundException({
+        status: false,
+        message: 'Product not found',
+      });
+
+    return { success: true, product };
   }
 
-  getProductsByCategory(id: string) {
-    return `This action returns products from category #${id}`;
+  async getPopularProducts() {
+    const products = await this.productRepository.find();
+    return {
+      success: true,
+      products,
+    };
   }
 
   getVendorProducts(name: string) {
