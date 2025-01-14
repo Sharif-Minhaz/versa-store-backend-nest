@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Get,
   Patch,
   Post,
+  Request,
   UploadedFile,
   UploadedFiles,
   UseGuards,
@@ -73,5 +75,11 @@ export class AuthController {
   @Post('google')
   continueWithGoogle(@Body() body) {
     return this.authService.continueWithGoogle(body);
+  }
+
+  @UseGuards(AccessTokenGuard)
+  @Get('profile')
+  getProfile(@Request() req) {
+    return this.authService.getProfile(req);
   }
 }

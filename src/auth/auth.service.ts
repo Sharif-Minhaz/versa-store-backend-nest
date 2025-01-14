@@ -444,4 +444,13 @@ export class AuthService {
     const tokens = await this.getTokens(newUser);
     return { tokens, user: newUser };
   }
+
+  async getProfile(req) {
+    const user = req.user;
+
+    return {
+      success: true,
+      profile: { ...user },
+    };
+  }
 }
