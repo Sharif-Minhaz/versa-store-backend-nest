@@ -4,6 +4,7 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
+  BadRequestException,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 
@@ -37,6 +38,10 @@ export class CatchEverythingFilter implements ExceptionFilter {
     const responseBody = {
       success: false,
       message: detailMessage,
+      errors:
+        exception instanceof BadRequestException
+          ? exception.getResponse()
+          : undefined,
       statusCode: httpStatus,
       timestamp: new Date().toISOString(),
       path: httpAdapter.getRequestUrl(ctx.getRequest()),

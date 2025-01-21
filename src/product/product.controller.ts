@@ -1,22 +1,38 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
   Param,
   Patch,
   Post,
+  Query,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
+import { ZodValidationPipe } from 'src/pipes/ZodValidation.pipe';
+import {
+  createProductSchema,
+  CreateProductZodDto,
+} from './dto/createProduct.dto';
+import { MultipleFilesValidationPipe } from 'src/pipes/MultipleFilesValidation.pipe';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { IsVendorGuard } from 'src/common/guards/isVendor.guard';
 
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get()
-  getAllProducts() {
-    return this.productService.getAllProducts();
+  getAllProducts(
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('category') category = 0,
+  ) {
+    return this.productService.getAllProducts({ page, limit, category });
   }
 
   @Get('single/:id')
@@ -30,14 +46,20 @@ export class ProductController {
   }
 
   @Get('vendor')
-  getVendorProducts(name: string) {
-    return this.productService.getVendorProducts(name);
+  getVendorProducts(id: number) {
+    return this.productService.getVendorProducts(id);
   }
 
-  @UseGuards(AccessTokenGuard)
+  @UseGuards(AccessTokenGuard, IsVendorGuard)
   @Post()
-  addProduct() {
-    return this.productService.addProduct();
+  @UseInterceptors(FilesInterceptor('images', 5))
+  addProduct(
+    @UploadedFiles(new MultipleFilesValidationPipe())
+    images: Array<Express.Multer.File>,
+    @Body(new ZodValidationPipe(createProductSchema))
+    dto: CreateProductZodDto,
+  ) {
+    return this.productService.addProduct(dto, images);
   }
 
   @Patch(':id')
@@ -46,8 +68,8 @@ export class ProductController {
   }
 
   @Delete(':id')
-  deleteProduct() {
-    return this.productService.deleteProduct();
+  deleteProduct(id: number) {
+    return this.productService.deleteProduct(id);
   }
 
   @Delete(':id/images/:imageId')
@@ -61,7 +83,7 @@ export class ProductController {
   }
 
   @Get('search')
-  searchProduct() {
-    return this.productService.searchProduct();
+  searchProduct(@Query('term') term: string) {
+    return this.productService.searchProduct(term);
   }
 }

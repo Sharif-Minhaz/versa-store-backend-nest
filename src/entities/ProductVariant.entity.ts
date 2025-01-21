@@ -9,7 +9,7 @@ export default class ProductVariant {
   @Column()
   type: string;
 
-  @Column()
+  @Column({ type: 'text' })
   description: string;
 
   @Column({ type: 'float' })

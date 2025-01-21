@@ -23,7 +23,7 @@ import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
 import { updateUserDtoSchema, UpdateUserZodDto } from './dto/updateUser.dto';
 import { FilesValidationPipe } from 'src/pipes/FilesValidation.pipe';
 import { LoggedInGuard } from 'src/common/guards/loggedIn.guard';
-import { RefreshTokenGuard } from 'src/common/guards/refreshToken.guard';
+// import { RefreshTokenGuard } from 'src/common/guards/refreshToken.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -65,7 +65,7 @@ export class AuthController {
     );
   }
 
-  @UseGuards(RefreshTokenGuard)
+  @UseGuards(AccessTokenGuard)
   @Post('refresh-token')
   refreshToken(@Body() body) {
     return this.authService.refreshTokens(body);

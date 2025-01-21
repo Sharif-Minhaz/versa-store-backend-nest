@@ -39,7 +39,7 @@ export class CategoryService {
 
     if (!category)
       throw new NotFoundException({
-        status: false,
+        success: false,
         message: 'Category not found',
       });
 
@@ -57,14 +57,14 @@ export class CategoryService {
 
     if (isCategoryExist) {
       throw new ConflictException({
-        status: false,
+        success: false,
         message: 'Category already exist',
       });
     }
 
     if (!image)
       throw new BadRequestException({
-        status: false,
+        success: false,
         message: 'Image is required',
       });
 
@@ -82,7 +82,7 @@ export class CategoryService {
     if (!newCategory)
       throw new HttpException(
         {
-          status: false,
+          success: false,
           message: 'Category not created',
         },
         400,

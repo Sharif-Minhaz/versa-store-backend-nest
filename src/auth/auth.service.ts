@@ -44,7 +44,7 @@ export class AuthService {
     if (dto?.registerFor === 'vendor') {
       if (!shopPhoto) {
         throw new BadRequestException({
-          status: false,
+          success: false,
           message: 'Shop photo is required',
         });
       }
@@ -72,7 +72,7 @@ export class AuthService {
 
     if (!user) {
       throw new BadRequestException({
-        status: false,
+        success: false,
         message: 'User registration failed',
       });
     }
@@ -155,14 +155,14 @@ export class AuthService {
 
       default:
         throw new BadRequestException({
-          status: false,
+          success: false,
           message: 'User type not supported',
         });
     }
 
     if (!user) {
       throw new BadRequestException({
-        status: false,
+        success: false,
         message: 'Invalid Credentials',
       });
     }
@@ -171,7 +171,7 @@ export class AuthService {
 
     if (!isPasswordValid) {
       throw new BadRequestException({
-        status: false,
+        success: false,
         message: 'Invalid Credentials',
       });
     }
@@ -251,7 +251,7 @@ export class AuthService {
 
     if (!user) {
       throw new UnauthorizedException({
-        status: false,
+        success: false,
         message: 'User is not authenticated',
       });
     }
@@ -353,7 +353,7 @@ export class AuthService {
 
     if (!userInfo) {
       throw new NotFoundException({
-        status: false,
+        success: false,
         message: 'User not found',
       });
     }
@@ -372,7 +372,7 @@ export class AuthService {
 
     if (!decoded) {
       throw new ForbiddenException({
-        status: false,
+        success: false,
         message: 'Access denied, invalid token',
       });
     }
@@ -403,7 +403,7 @@ export class AuthService {
 
     if (!user) {
       throw new NotFoundException({
-        status: false,
+        success: false,
         message: 'User not found',
       });
     }

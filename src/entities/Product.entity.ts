@@ -7,6 +7,7 @@ import {
   ManyToOne,
   ManyToMany,
   OneToMany,
+  Index,
 } from 'typeorm';
 import Category from './Category.entity';
 import Vendor from './Vendor.entity';
@@ -70,4 +71,8 @@ export default class Product {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column({ type: 'tsvector', select: false, nullable: true }) // Optional: Don't fetch by default
+  @Index({ fulltext: true }) // ! FIXME: only works for mySQL not in postgres
+  searchVector: string;
 }
