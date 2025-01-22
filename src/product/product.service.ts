@@ -13,6 +13,7 @@ import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { REQUEST } from '@nestjs/core';
 import ProductImage from 'src/entities/ProductImage.entity';
 import ProductVariant from 'src/entities/ProductVariant.entity';
+
 @Injectable({ scope: Scope.REQUEST })
 export class ProductService {
   constructor(
@@ -24,75 +25,91 @@ export class ProductService {
     private productVariantRepository: Repository<ProductVariant>,
     private cloudinaryService: CloudinaryService,
   ) {}
+
   async addProduct(
     dto: CreateProductZodDto,
     files: Array<Express.Multer.File>,
   ) {
-    // user information
-    const user = this.request?.user;
-    if (!files.length) {
-      throw new BadRequestException({
-        status: false,
-        message: 'Product image not found',
-      });
-    }
-    const parsedProductVariant = JSON.parse(dto.variant);
-    // * product data to be saved
-    const productData = {
-      name: dto.name,
-      price: dto.price,
-      description: dto.description,
-      discount: dto.discount,
-      brand: dto.brand,
-      stock: dto.stock,
-      sold: dto.sold,
-      defaultType: dto.defaultType,
-      deliveryCharge: dto.deliveryCharge,
-      addedBy: { _id: user._id },
-      category: { _id: dto.category },
-    };
-    const product = await this.productRepository.save(productData);
-    // upload images
-    const uploadFile = async (file: Express.Multer.File) => {
-      try {
-        const { publicId, imageUrl } =
-          await this.cloudinaryService.uploadImage(file);
-        return { publicId, imageUrl };
-      } catch (error) {
-        console.error(`Failed to upload file: ${file.originalname}`, error);
-        throw new Error(`Upload failed for file: ${file.originalname}`);
+    const queryRunner =
+      this.productRepository.manager.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const user = this.request?.user;
+      if (!files.length) {
+        throw new BadRequestException({
+          status: false,
+          message: 'Product image not found',
+        });
       }
-    };
-    const images = await Promise.all(files.map(uploadFile));
-    const productImages = await Promise.all(
-      images.map(async (image) => {
-        const newImage = this.productImageRepository.create({
-          image: image.imageUrl,
-          imageKey: image.publicId,
-          product: { _id: product._id },
-        });
-        return this.productImageRepository.save(newImage);
-      }),
-    );
-    // upload product variant
-    const productVariant = await Promise.all(
-      parsedProductVariant.map(async (variant) => {
-        const newVariant = this.productVariantRepository.create({
-          ...variant,
-          product: { _id: product._id },
-        });
-        return this.productVariantRepository.save(newVariant);
-      }),
-    );
-    return {
-      success: true,
-      message: 'Product added successfully',
-      product: {
-        ...product,
-        images: productImages,
-        variant: productVariant,
-      },
-    };
+      const parsedProductVariant = JSON.parse(dto.variant);
+      const productData = {
+        name: dto.name,
+        price: dto.price,
+        description: dto.description,
+        discount: dto.discount,
+        brand: dto.brand,
+        stock: dto.stock,
+        sold: dto.sold,
+        defaultType: dto.defaultType,
+        deliveryCharge: dto.deliveryCharge,
+        addedBy: { _id: user._id },
+        category: { _id: dto.category },
+      };
+      const product = await queryRunner.manager.save(
+        this.productRepository.create(productData),
+      );
+
+      const uploadFile = async (file: Express.Multer.File) => {
+        try {
+          const { publicId, imageUrl } =
+            await this.cloudinaryService.uploadImage(file);
+          return { publicId, imageUrl };
+        } catch (error) {
+          console.error(`Failed to upload file: ${file.originalname}`, error);
+          throw new Error(`Upload failed for file: ${file.originalname}`);
+        }
+      };
+
+      const images = await Promise.all(files.map(uploadFile));
+      const productImages = await Promise.all(
+        images.map(async (image) => {
+          const newImage = this.productImageRepository.create({
+            image: image.imageUrl,
+            imageKey: image.publicId,
+            product: { _id: product._id },
+          });
+          return queryRunner.manager.save(newImage);
+        }),
+      );
+
+      const productVariant = await Promise.all(
+        parsedProductVariant.map(async (variant) => {
+          const newVariant = this.productVariantRepository.create({
+            ...variant,
+            product: 0,
+          });
+          return queryRunner.manager.save(newVariant);
+        }),
+      );
+
+      await queryRunner.commitTransaction();
+      return {
+        success: true,
+        message: 'Product added successfully',
+        product: {
+          ...product,
+          images: productImages,
+          variant: productVariant,
+        },
+      };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async getAllProducts({ page, limit, category }) {
