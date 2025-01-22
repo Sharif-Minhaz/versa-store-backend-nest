@@ -88,7 +88,7 @@ export class ProductService {
         parsedProductVariant.map(async (variant) => {
           const newVariant = this.productVariantRepository.create({
             ...variant,
-            product: 0,
+            product: { _id: product._id },
           });
           return queryRunner.manager.save(newVariant);
         }),
@@ -126,9 +126,10 @@ export class ProductService {
       skip: (page - 1) * limit,
       take: limit,
       where,
+      relations: ['category', 'addedBy', 'images', 'variants'],
     });
 
-    return { success: true, data: { products } };
+    return { success: true, data: { page, limit, products } };
   }
 
   async getProductById(id: number) {
@@ -148,6 +149,7 @@ export class ProductService {
   async getPopularProducts() {
     const products = await this.productRepository.find({
       order: { sold: 'DESC' },
+      take: 10,
     });
 
     return {
